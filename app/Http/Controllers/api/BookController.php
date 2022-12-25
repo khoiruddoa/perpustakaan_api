@@ -37,6 +37,7 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $payload = $request->all();
+
         if (!isset($payload['id_category'])) {
             return response()->json([
                 'status' => false,
@@ -81,8 +82,6 @@ class BookController extends Controller
                 'data' => null
             ]);
         }
-
-
 
 
         $photo = $request->file('photo');
@@ -143,26 +142,30 @@ class BookController extends Controller
      * @param  \App\Models\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, $id)
     {
+        $book = Book::find($id);
+
+        $old_photo = $book->photo;
+
+
+
         $book->fill($request->all());
-        $photo = $request->file('photo');
+        $photo = $request->file("photo");
         if ($photo != null) {
-            $path_old = str_replace($request->getSchemeAndHttpHost(), "", $book->photo);
-            $photo_old = public_path($path_old);
-
-            unlink($photo_old);
-
             $filename = $photo->hashName();
-            $photo->move('photo', $filename);
+            $photo->move("photo", $filename);
             $book->photo = $request->getSchemeAndHttpHost() . "/photo/" . $filename;
+            $old_photo2 = str_replace(request()->getSchemeAndHttpHost() . '/', "", $old_photo);
+            unlink($old_photo2);
         }
 
         $book->save();
+
         return response()->json([
             'status' => true,
-            'message' => 'sukses update',
-            'data' => $book
+            'message' => 'berhasil update',
+
         ]);
     }
 
@@ -183,12 +186,12 @@ class BookController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Book Berhasil Dihapus!',
-            ], 200);
+            ]);
         } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Post Gagal Dihapus!',
-            ], 400);
+            ]);
         }
     }
 }

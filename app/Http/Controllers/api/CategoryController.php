@@ -102,7 +102,6 @@ class CategoryController extends Controller
             'data' => $category
         ]);
     }
-
     /**
      * Remove the specified resource from storage.
      *

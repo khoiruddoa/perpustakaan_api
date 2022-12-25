@@ -14,6 +14,9 @@ class AuthorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    //menampilkan seluruh author
+
     public function index()
     {
         $author = Author::query()->get();
@@ -32,8 +35,12 @@ class AuthorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    //simpan data author
     public function store(Request $request)
     {
+
+        //nama tidak boleh kosong
         $payload = $request->all();
         if (!isset($payload['author_name'])) {
             return response()->json([
@@ -42,6 +49,8 @@ class AuthorController extends Controller
                 'data' => null
             ]);
         }
+
+        //alamat tidak boleh kosong
         if (!isset($payload['address'])) {
             return response()->json([
                 'status' => false,
@@ -81,14 +90,15 @@ class AuthorController extends Controller
         }
 
 
-
-
+        //save photo
         $photo = $request->file('photo');
         $filename = $photo->hashName();
         $photo->move('photo', $filename);
         $payload['photo'] = $request->getSchemeAndHttpHost() . "/photo/" . $filename;
 
         $author = Author::query()->create($payload);
+
+        //kirim response
         return response()->json([
             'status' => true,
             'message' => 'insert data author success',
@@ -102,6 +112,10 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
+
+
+    //show data berdasarkan id
+
     public function show($id)
     {
         $author = Author::query()
@@ -129,21 +143,32 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Author $author)
+
+    //update
+    public function update(Request $request, $id)
     {
+        $author = Author::find($id);
+
+        $old_photo = $author->photo;
+
+
+
         $author->fill($request->all());
-        $photo = $request->file('photo');
+        $photo = $request->file("photo");
         if ($photo != null) {
             $filename = $photo->hashName();
-            $photo->move('photo', $filename);
+            $photo->move("photo", $filename);
             $author->photo = $request->getSchemeAndHttpHost() . "/photo/" . $filename;
+            $old_photo2 = str_replace(request()->getSchemeAndHttpHost() . '/', "", $old_photo);
+            unlink($old_photo2);
         }
 
         $author->save();
+
         return response()->json([
             'status' => true,
-            'message' => 'sukses update',
-            'data' => $author
+            'message' => 'berhasil update',
+
         ]);
     }
 
@@ -153,6 +178,7 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
+    //delete
     public function destroy($id)
     {
         $author = Author::findOrFail($id);

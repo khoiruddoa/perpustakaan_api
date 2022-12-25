@@ -21,12 +21,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+//route untuk author
+
 Route::get("/author", [AuthorController::class, "index"]);
 Route::get("/author/{id}", [AuthorController::class, "show"]);
 Route::post("author/", [AuthorController::class, "store"]);
 Route::post("/author/{id}", [AuthorController::class, "update"]);
 Route::get("/author/delete/{id}", [AuthorController::class, "destroy"]);
 
+//route untuk category
 
 Route::get("/category", [CategoryController::class, "index"]);
 Route::get("/category/{id}", [CategoryController::class, "show"]);
@@ -35,6 +38,8 @@ Route::post("/category/{id}", [CategoryController::class, "update"]);
 Route::get("/category/delete/{id}", [CategoryController::class, "destroy"]);
 
 
+
+//route untuk buku
 Route::get("/book", [BookController::class, "index"]);
 Route::get("/book/{id}", [BookController::class, "show"]);
 Route::post("book/", [BookController::class, "store"]);
